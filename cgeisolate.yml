@@ -1,3 +1,4 @@
+name: cgeisolate
 channels:
   - conda-forge
   - bioconda

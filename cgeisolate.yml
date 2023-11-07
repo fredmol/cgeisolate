@@ -6,3 +6,4 @@ channels:
   - defaults
 dependencies:
   - kma
+  - kgt_mlst

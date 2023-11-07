@@ -10,5 +10,5 @@ def isolate_pipeline(args):
     kma.KMARunner(args.input,
               args.output + "/reference_mapping",
               args.db_dir + '/bac_db',
-              "-ID 0 -nf -mem_mode -sasm -ef -1t1").run()
+              "-ID 50 -nf -mem_mode -sasm -ef -1t1").run()
     return 'isolate_pipeline'

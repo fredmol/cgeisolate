@@ -10,12 +10,12 @@ def isolate_pipeline(args):
     kma.KMARunner(args.input,
               args.output + "/bacteria_alignment",
               args.db_dir + '/bac_db/bac_db',
-              "-ID 75 -md 5 -ont -1t1").run()
+              "-ID 75 -md 5 -ont -1t1 -t 8").run()
 
     kma.KMARunner(args.input,
               args.output + "/amr",
               args.db_dir + '/resfinder_db/resfinder_db',
-              "-ont -md 5").run()
+              "-ont -md 5 -t 8").run()
 
     #Run if species is E. coli?
     #kma.KMARunner(args.input,
@@ -26,7 +26,7 @@ def isolate_pipeline(args):
     kma.KMARunner(args.input,
                   args.output + "/plasmid",
                   args.db_dir + '/plasmid_db/plasmid_db',
-                  "-ont -md 5").run()
+                  "-ont -md 5 -t 8").run()
 
     cmd = 'kgt_mlst -i {} -o {} -db_dir {} -md 5'\
         .format(args.input, args.output + "/mlst", args.db_dir)

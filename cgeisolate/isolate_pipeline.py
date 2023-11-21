@@ -17,10 +17,11 @@ def isolate_pipeline(args):
               args.db_dir + '/resfinder_db/resfinder_db',
               "-ont -md 5").run()
 
-    kma.KMARunner(args.input,
-                  args.output + "/virulence",
-                  args.db_dir + '/virulence_db/virulence_db',
-                  "-ont -md 5").run()
+    #Run if species is E. coli?
+    #kma.KMARunner(args.input,
+    #              args.output + "/virulence",
+    #              args.db_dir + '/virulence_db/virulence_db',
+    #              "-ont -md 5").run()
 
     kma.KMARunner(args.input,
                   args.output + "/plasmid",

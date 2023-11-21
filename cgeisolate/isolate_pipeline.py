@@ -32,4 +32,6 @@ def isolate_pipeline(args):
         .format(args.input, args.output + "/mlst", args.db_dir)
     os.system(cmd)
 
+    #Write code to compile output to a single file
+
     return 'isolate_pipeline'

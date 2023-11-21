@@ -27,5 +27,8 @@ def isolate_pipeline(args):
                   args.db_dir + '/plasmid_db',
                   "-ont -md 5").run()
 
+    cmd = 'kgt_mlst -i {} -o {} -db_dir {} -md 5'\
+        .format(args.input, args.output + "/mlst", args.db_dir)
+    os.system(cmd)
 
     return 'isolate_pipeline'

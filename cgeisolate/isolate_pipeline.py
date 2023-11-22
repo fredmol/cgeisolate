@@ -6,6 +6,12 @@ import csv
 from cgeisolate import kma
 
 def isolate_pipeline(args):
+    if args.db_dir is None:
+        if not os.path.exists('/opt/cge/cge_db'):
+            sys.exit('Please install the cge_db. It should be located in /opt/cge/cge_db')
+        else:
+            args.db_dir = '/opt/cge/cge_db'
+
     os.system('mkdir -p ' + args.output)
 
     # Run KMA for bacteria alignment

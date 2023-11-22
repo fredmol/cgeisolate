@@ -77,6 +77,14 @@ def format_results_section(results, section_title):
 
 def create_report(args):
     # Load results
+    gene_data = read_tab_separated_file(args.db_dir + '/phenotypes.txt')
+
+    phenotypes = set()
+    for amr_result in amr_results:
+        for gene in gene_data:
+            if gene['Gene_accession no.'] == amr_result.get('#Template'):
+                phenotypes.update(gene['Phenotype'].split(','))
+
     bacterial_results = read_tab_separated_file(args.output + "/bacteria_alignment.res")
     amr_results = read_tab_separated_file(args.output + "/amr.res")
     plasmid_results = read_tab_separated_file(args.output + "/plasmid.res")
@@ -96,14 +104,14 @@ def create_report(args):
     # Plasmid Results Section
     report += format_results_section(plasmid_results, "Plasmid Findings")
 
-    # Expected Phenotypes Based on AMR Genes Section (assuming this data is within amr_results)
+    # Expected Phenotypes Based on AMR Genes Section
     report += "Expected Phenotypes Based on AMR Genes:\n"
     report += "-" * 60 + "\n"
-    phenotypes = set()
-    for amr_result in amr_results:
-        phenotypes.update(amr_result['Phenotype'].split(','))  # Assuming 'Phenotype' is a field in amr_results
-    for phenotype in sorted(phenotypes):
-        report += f"• {phenotype.strip()}\n"
+    if phenotypes:
+        for phenotype in sorted(phenotypes):
+            report += f"• {phenotype.strip()}\n"
+    else:
+        report += "No phenotypes expected based on AMR genes.\n"
     report += "\n"
 
     return report

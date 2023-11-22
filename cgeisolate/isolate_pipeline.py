@@ -46,7 +46,8 @@ def isolate_pipeline(args):
     os.system(cmd)
 
     report = create_report(args, highest_scoring_hit)
-    print (report)
+    with open(args.output + "/report.txt", 'w') as file:
+        file.write(report)
 
     return 'isolate_pipeline'
 

@@ -39,7 +39,7 @@ def isolate_pipeline(args):
         .format(args.input, args.output + "/mlst", args.db_dir)
     os.system(cmd)
 
-    report = create_report(args)
+    report = create_report(args, highest_scoring_hit)
     print (report)
 
     return 'isolate_pipeline'
@@ -75,7 +75,7 @@ def format_results_section(results, section_title):
         report += f"Identity: {result['Template_Identity'].strip()}, Coverage: {result['Template_Coverage'].strip()}, Depth: {result['Depth'].strip()}\n\n"
     return report
 
-def create_report(args):
+def create_report(args, highest_scoring_hit):
     # Load results
     gene_data = read_tab_separated_file(args.db_dir + '/phenotypes.txt')
 
@@ -113,6 +113,17 @@ def create_report(args):
     else:
         report += "No phenotypes expected based on AMR genes.\n"
     report += "\n"
+
+    if 'Escherichia coli' in highest_scoring_hit:
+        virulence_results = read_tab_separated_file(output + '/virulence.res')
+        report += "Virulence Factors for Escherichia coli:\n"
+        report += "-" * 60 + "\n"
+        for result in virulence_results:
+            report += f"Template: {result['#Template']}\n"
+            report += f"Identity: {result['Template_Identity'].strip()}, Coverage: {result['Template_Coverage'].strip()}, Depth: {result['Depth'].strip()}\n\n"
+    else:
+        report += "No virulence factors analysis for Escherichia coli.\n"
+
 
     return report
 

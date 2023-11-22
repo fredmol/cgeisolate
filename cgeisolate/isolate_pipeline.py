@@ -121,7 +121,7 @@ def create_report(args, highest_scoring_hit):
     report += "\n"
 
     if 'Escherichia coli' in highest_scoring_hit:
-        virulence_results = read_tab_separated_file(output + '/virulence.res')
+        virulence_results = read_tab_separated_file(args.output + '/virulence.res')
         report += "Virulence Factors for Escherichia coli:\n"
         report += "-" * 60 + "\n"
         for result in virulence_results:

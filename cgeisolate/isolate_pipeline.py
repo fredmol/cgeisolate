@@ -96,13 +96,17 @@ def create_report(args, highest_scoring_hit):
             if gene['Gene_accession no.'] == amr_result.get('#Template'):
                 phenotypes.update(gene['Phenotype'].split(','))
 
+    highest_scoring_hit_details = get_highest_scoring_hit_details(args.output + "/bacterial_alignment.res")
+
     report = "Pipeline Results Report\n"
     report += "=" * 60 + "\n"
-
-    # Top Scoring Bacterial Alignment Hit
-    report += "Top Scoring Bacterial Alignment Hit:\n"
-    report += "-" * 60 + "\n"
-    report += f"Template: {highest_scoring_hit}\n\n"
+    if highest_scoring_hit_details:
+        report += f"Template: {highest_scoring_hit_details['#Template']}\n"
+        report += f"Identity: {highest_scoring_hit_details['Template_Identity']}, "
+        report += f"Coverage: {highest_scoring_hit_details['Template_Coverage']}, "
+        report += f"Depth: {highest_scoring_hit_details['Depth']}\n\n"
+    else:
+        report += "No bacteria alignment hits found.\n\n"
 
     # AMR Results Section
     report += format_results_section(amr_results, "Antimicrobial Resistance (AMR) Findings")
@@ -133,3 +137,20 @@ def create_report(args, highest_scoring_hit):
 
     return report
 
+
+def get_highest_scoring_hit_details(file_path):
+    with open(file_path, 'r') as file:
+        reader = csv.DictReader(file, delimiter='\t')
+        highest_scoring_hit = None
+        max_score = float('-inf')
+
+        for row in reader:
+            try:
+                score = float(row['Score'])
+                if score > max_score:
+                    highest_scoring_hit = row
+                    max_score = score
+            except ValueError:
+                continue
+
+    return highest_scoring_hit

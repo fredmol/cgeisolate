@@ -79,16 +79,16 @@ def create_report(args):
     # Load results
     gene_data = read_tab_separated_file(args.db_dir + '/phenotypes.txt')
 
+    bacterial_results = read_tab_separated_file(args.output + "/bacteria_alignment.res")
+    amr_results = read_tab_separated_file(args.output + "/amr.res")
+    plasmid_results = read_tab_separated_file(args.output + "/plasmid.res")
+    highest_scoring_hit = get_highest_scoring_hit_template(args.output + "/bacteria_alignment.res")
+
     phenotypes = set()
     for amr_result in amr_results:
         for gene in gene_data:
             if gene['Gene_accession no.'] == amr_result.get('#Template'):
                 phenotypes.update(gene['Phenotype'].split(','))
-
-    bacterial_results = read_tab_separated_file(args.output + "/bacteria_alignment.res")
-    amr_results = read_tab_separated_file(args.output + "/amr.res")
-    plasmid_results = read_tab_separated_file(args.output + "/plasmid.res")
-    highest_scoring_hit = get_highest_scoring_hit_template(args.output + "/bacteria_alignment.res")
 
     report = "Pipeline Results Report\n"
     report += "=" * 60 + "\n"

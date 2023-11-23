@@ -1,4 +1,4 @@
-# cgeisolate (k-mer gene typer)
+# cgeisolate
 
 # Installation
 

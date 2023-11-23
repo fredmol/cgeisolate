@@ -6,6 +6,14 @@ import csv
 from cgeisolate import kma
 
 def isolate_pipeline(args):
+    if args.folder is not None:
+        if args.name is None:
+            sys.exit('Please provide a name for the merged file')
+        else:
+            merge_fastq_files(args.folder)
+            args.input = os.path.join(os.path.expanduser('~'), args.name)
+            #args.output = os.path.join(os.path.expanduser('~'), args.name)
+
     if args.db_dir is None:
         if not os.path.exists('/opt/cge/cge_db'):
             sys.exit('Please install the cge_db. It should be located in /opt/cge/cge_db')
@@ -50,6 +58,35 @@ def isolate_pipeline(args):
         file.write(report)
 
     return 'isolate_pipeline'
+
+def merge_fastq_files(source_directory, output_name):
+    """
+    Merge all fastq.gz files in the given directory and save the output with the specified name in the home directory.
+
+    Args:
+    source_directory (str): Path to the directory containing fastq.gz files.
+    output_name (str): Name for the output file.
+    """
+    # Home directory path
+    home_directory = os.path.expanduser('~')
+
+    # Output file path with the specified name
+    output_file = os.path.join(home_directory, f'{output_name}.fastq.gz')
+
+    # Get a list of all fastq.gz files in the source directory
+    fastq_files = [f for f in os.listdir(source_directory) if f.endswith('.fastq.gz')]
+
+    # Open the output file in write mode
+    with gzip.open(output_file, 'wb') as f_out:
+        # Iterate over each file and append its content to the output file
+        for file in fastq_files:
+            file_path = os.path.join(source_directory, file)
+            with gzip.open(file_path, 'rb') as f_in:
+                # Copy the content of each file to the output file
+                f_out.writelines(f_in)
+
+    print(f"All files merged into {output_file}")
+
 
 def get_highest_scoring_hit_template(file_path):
     with open(file_path, 'r') as file:

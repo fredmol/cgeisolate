@@ -26,12 +26,13 @@ data = {
         ],
         "run": [
             "python >=3.6",
-            "kma >=1.4.9"
+            "kma >=1.4.9",
+            "kgt_mlst"
         ]
     },
     "about": {
         "home": "https://github.com/genomicepidemiology/cgeisolate",
-        "summary": "Kmergenetyper test.",
+        "summary": "CGE isolate pipeline",
         "license": "Apache-2.0"
     }
 }

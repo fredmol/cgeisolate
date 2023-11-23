@@ -1,15 +1,12 @@
-# cgeisolate (k-mer gene typer)
+# cgeisolate 
 
 # Installation
 
-cgeisolate typer requires kma (>=1.4.0) to be installed and usable directly from path (i.e. $kma).
-This can be done by installing kma from source or using conda:
+conda install -c genomicepidemiology cgeisolate
 
-`conda create -n cgeisolate -f cgeisolate.yml`
+# Database
 
-`conda activate cgeisolate`
 
-`pip install cgeisolate`
 
 # Usage
 

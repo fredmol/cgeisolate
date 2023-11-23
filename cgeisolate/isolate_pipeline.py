@@ -11,7 +11,7 @@ def isolate_pipeline(args):
             sys.exit('Please provide a name for the merged file')
         else:
             merge_fastq_files(args.folder, args.name)
-            args.input = os.path.join(os.path.expanduser('~'), args.name)
+            args.input = os.path.join(os.path.expanduser('~'), args.name + '.fastq.gz')
             #args.output = os.path.join(os.path.expanduser('~'), args.name)
 
     if args.db_dir is None:

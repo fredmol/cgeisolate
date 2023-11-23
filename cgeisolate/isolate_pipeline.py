@@ -10,7 +10,7 @@ def isolate_pipeline(args):
         if args.name is None:
             sys.exit('Please provide a name for the merged file')
         else:
-            merge_fastq_files(args.folder)
+            merge_fastq_files(args.folder, args.name)
             args.input = os.path.join(os.path.expanduser('~'), args.name)
             #args.output = os.path.join(os.path.expanduser('~'), args.name)
 

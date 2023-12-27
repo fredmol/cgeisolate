@@ -57,7 +57,7 @@ def isolate_pipeline(args):
     with open(args.output + "/report.txt", 'w') as file:
         file.write(report)
 
-    print("Pipeline completed successfully. Report generated.")
+    print("Pipeline completed successfully. Report generated and stored in: " + args.output + "/report.txt")
     return 'isolate_pipeline'
 
 

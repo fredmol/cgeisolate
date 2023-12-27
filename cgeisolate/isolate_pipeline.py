@@ -5,59 +5,61 @@ import csv
 
 from cgeisolate import kma
 
+
 def isolate_pipeline(args):
-    if args.folder is not None:
-        if args.name is None:
-            sys.exit('Please provide a name for the merged file')
-        else:
-            merge_fastq_files_unix(args.folder, args.name)
-            args.input = os.path.join(os.path.expanduser('~'), args.name + '.fastq.gz')
-            #args.output = os.path.join(os.path.expanduser('~'), args.name)
+    print("Starting the isolate pipeline...")
 
     if args.db_dir is None:
-        if not os.path.exists('/opt/cge/cge_db'):
-            sys.exit('Please install the cge_db. It should be located in /opt/cge/cge_db')
+        if not os.path.exists('/var/liv/cge/database/cge_db/'):
+            sys.exit('Please install the cge_db. It should be located in /var/liv/cge/database/cge_db')
         else:
-            args.db_dir = '/opt/cge/cge_db'
+            args.db_dir = '/var/liv/cge/database/cge_db/'
+            print(f"Using CGE database directory: {args.db_dir}")
 
+    print(f"Creating output directory: {args.output}")
     os.system('mkdir -p ' + args.output)
 
-    # Run KMA for bacteria alignment
+    print(f"Running KMA for bacteria alignment on input: {args.input}")
     kma.KMARunner(args.input,
                   args.output + "/bacteria_alignment",
                   args.db_dir + '/bac_db/bac_db',
                   "-ID 75 -md 5 -ont -1t1 -mem_mode -t 8").run()
 
     highest_scoring_hit = get_highest_scoring_hit_template(args.output + "/bacteria_alignment.res")
+    print(f"Highest scoring hit: {highest_scoring_hit}")
 
     if 'Escherichia coli' in highest_scoring_hit:
+        print("Escherichia coli detected. Running KMA for virulence...")
         kma.KMARunner(args.input,
                       args.output + "/virulence",
                       args.db_dir + '/virulence_db/virulence_db',
                       "-ont -md 5").run()
 
-    # Run KMA for AMR
+    print("Running KMA for AMR...")
     kma.KMARunner(args.input,
                   args.output + "/amr",
                   args.db_dir + '/resfinder_db/resfinder_db',
                   "-ont -md 5 -mem_mode -t 8").run()
 
-    # Run KMA for plasmid
+    print("Running KMA for plasmid...")
     kma.KMARunner(args.input,
                   args.output + "/plasmid",
                   args.db_dir + '/plasmid_db/plasmid_db',
                   "-ont -md 5 -mem_mode -t 8").run()
 
-    # Run MLST
-    cmd = 'kgt_mlst -i {} -o {} -db_dir {} -md 5'\
+    print("Running MLST...")
+    cmd = 'kgt_mlst -i {} -o {} -db_dir {} -md 5' \
         .format(args.input, args.output + "/mlst", args.db_dir)
     os.system(cmd)
 
+    print("Creating report...")
     report = create_report(args, highest_scoring_hit)
     with open(args.output + "/report.txt", 'w') as file:
         file.write(report)
 
+    print("Pipeline completed successfully. Report generated.")
     return 'isolate_pipeline'
+
 
 def merge_fastq_files_unix(source_directory, output_name):
     """

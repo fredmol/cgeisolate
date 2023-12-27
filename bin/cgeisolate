@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import argparse
 import sys
@@ -20,9 +20,6 @@ def main():
     parser = argparse.ArgumentParser(description=description)
     parser.add_argument('-i', action="store", type=str, dest='input',
                         default=None, help='Nanopore reads')
-    parser.add_argument('-f', action="store", type=str, dest='folder',
-                        default=None, help='Folder with many smaller files of Nanopore reads.'
-                                         'These will be merged into one file and analyzed.')
     parser.add_argument('-name', action="store", type=str, dest='name',
                         default=None, help='If a folder is provided, this name will be used for the merged file.')
 

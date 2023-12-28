@@ -10,10 +10,10 @@ def isolate_pipeline(args):
     print("Starting the isolate pipeline...")
 
     if args.db_dir is None:
-        if not os.path.exists('/var/liv/cge/database/cge_db/'):
-            sys.exit('Please install the cge_db. It should be located in /var/liv/cge/database/cge_db')
+        if not os.path.exists('/var/lib/cge/database/cge_db/'):
+            sys.exit('Please install the cge_db. It should be located in /var/lib/cge/database/cge_db')
         else:
-            args.db_dir = '/var/liv/cge/database/cge_db/'
+            args.db_dir = '/var/lib/cge/database/cge_db/'
             print(f"Using CGE database directory: {args.db_dir}")
 
     print(f"Creating output directory: {args.output}")

@@ -17,7 +17,7 @@ def isolate_pipeline(args):
             print(f"Using CGE database directory: {args.db_dir}")
 
     if args.output is None:
-        output = '/var/lib/cge/results/{}'.format(args.name)
+        args.output = '/var/lib/cge/results/{}'.format(args.name)
 
     print(f"Creating output directory: {args.output}")
     os.system('mkdir -p ' + args.output)

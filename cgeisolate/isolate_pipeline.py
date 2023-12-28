@@ -23,7 +23,8 @@ def isolate_pipeline(args):
     os.system('mkdir -p ' + args.output)
 
     print(f"Running KMA for bacteria alignment on input: {args.input}")
-    os.system('kma -t_db {} -i {} -o {} -ID 75 -md 5 -ont -1t1 -mem_mode -t 8').format(args.db_dir + '/bac_db/bac_db', args.input, args.output + "/bacteria_alignment")
+    os.system('kma -t_db {} -i {} -o {} -ID 75 -md 5 -ont -1t1 -mem_mode -t 8'\
+              .format(args.db_dir + '/bac_db/bac_db', args.input, args.output + "/bacteria_alignment"))
     #kma.KMARunner(args.input,
     #              args.output + "/bacteria_alignment",
     #              args.db_dir + '/bac_db/bac_db',

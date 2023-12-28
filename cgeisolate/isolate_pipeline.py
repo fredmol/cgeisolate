@@ -23,8 +23,8 @@ def isolate_pipeline(args):
     os.system('mkdir -p ' + args.output)
 
     print(f"Running KMA for bacteria alignment on input: {args.input}")
-    os.system('kma -t_db {} -i {} -o {} -ID 75 -md 5 -ont -1t1 -mem_mode -t 8'\
-              .format(args.db_dir + '/bac_db/bac_db', args.input, args.output + "/bacteria_alignment"))
+    os.system('{}kma -t_db {} -i {} -o {} -ID 75 -md 5 -ont -1t1 -mem_mode -t 8'\
+              .format(args.env_path_bin, args.db_dir + '/bac_db/bac_db', args.input, args.output + "/bacteria_alignment"))
     #kma.KMARunner(args.input,
     #              args.output + "/bacteria_alignment",
     #              args.db_dir + '/bac_db/bac_db',
@@ -35,27 +35,20 @@ def isolate_pipeline(args):
 
     if 'Escherichia coli' in highest_scoring_hit:
         print("Escherichia coli detected. Running KMA for virulence...")
-        kma.KMARunner(args.input,
-                      args.output + "/virulence",
-                      args.db_dir + '/virulence_db/virulence_db',
-                      "-ont -md 5").run()
+        os.system('{}kma -t_db {} -i {} -o {} -ont -md 5'\
+                  .format(args.env_path_bin, args.db_dir + '/virulence_db/virulence_db', args.input, args.output + "/virulence"))
 
     print("Running KMA for AMR...")
-    kma.KMARunner(args.input,
-                  args.output + "/amr",
-                  args.db_dir + '/resfinder_db/resfinder_db',
-                  "-ont -md 5 -mem_mode -t 8").run()
+    os.system('{}kma -t_db {} -i {} -o {} -ont -md 5 -mem_mode -t 8'\
+              .format(args.env_path_bin, args.db_dir + '/resfinder_db/resfinder_db', args.input, args.output + "/amr"))
 
     print("Running KMA for plasmid...")
-    kma.KMARunner(args.input,
-                  args.output + "/plasmid",
-                  args.db_dir + '/plasmid_db/plasmid_db',
-                  "-ont -md 5 -mem_mode -t 8").run()
+    os.system('{}kma -t_db {} -i {} -o {} -ont -md 5 -mem_mode -t 8'\
+                .format(args.env_path_bin, args.db_dir + '/plasmid_db/plasmid_db', args.input, args.output + "/plasmid"))
 
     print("Running MLST...")
-    cmd = 'kgt_mlst -i {} -o {} -db_dir {} -md 5' \
-        .format(args.input, args.output + "/mlst", args.db_dir)
-    os.system(cmd)
+    os.system('{}kgt_mlst -i {} -o {} -db_dir {} -md 5'\
+                .format(args.env_path_bin, args.input, args.output + "/mlst", args.db_dir))
 
     print("Creating report...")
     report = create_report(args, highest_scoring_hit)
@@ -65,28 +58,6 @@ def isolate_pipeline(args):
     print("Pipeline completed successfully. Report generated and stored in: " + args.output + "/report.txt")
     return 'isolate_pipeline'
 
-
-def merge_fastq_files_unix(source_directory, output_name):
-    """
-    Merge all fastq.gz files in the given directory using Unix commands and save the output with the specified name in the home directory.
-
-    Args:
-    source_directory (str): Path to the directory containing fastq.gz files.
-    output_name (str): Name for the output file.
-    """
-    # Home directory path
-    home_directory = os.path.expanduser('~')
-
-    # Output file path with the specified name
-    output_file = os.path.join(home_directory, f'{output_name}.fastq.gz')
-
-    # Creating the Unix command for concatenation
-    cmd = f'cat {source_directory}/*.fastq.gz > {output_file}'
-
-    # Executing the command
-    subprocess.run(cmd, shell=True, check=True)
-
-    print(f"All files merged into {output_file}")
 
 def get_highest_scoring_hit_template(file_path):
     with open(file_path, 'r') as file:

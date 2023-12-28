@@ -23,10 +23,11 @@ def isolate_pipeline(args):
     os.system('mkdir -p ' + args.output)
 
     print(f"Running KMA for bacteria alignment on input: {args.input}")
-    kma.KMARunner(args.input,
-                  args.output + "/bacteria_alignment",
-                  args.db_dir + '/bac_db/bac_db',
-                  "-ID 75 -md 5 -ont -1t1 -mem_mode -t 8").run()
+    os.system('kma -t_db {} -i {} -o {} -ID 75 -md 5 -ont -1t1 -mem_mode -t 8').format(args.db_dir + '/bac_db/bac_db', args.input, args.output + "/bacteria_alignment")
+    #kma.KMARunner(args.input,
+    #              args.output + "/bacteria_alignment",
+    #              args.db_dir + '/bac_db/bac_db',
+    #              "-ID 75 -md 5 -ont -1t1 -mem_mode -t 8").run()
 
     highest_scoring_hit = get_highest_scoring_hit_template(args.output + "/bacteria_alignment.res")
     print(f"Highest scoring hit: {highest_scoring_hit}")

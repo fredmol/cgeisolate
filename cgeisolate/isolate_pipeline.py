@@ -109,7 +109,7 @@ def create_report(args, highest_scoring_hit):
 
     highest_scoring_hit_details = get_highest_scoring_hit_details(args.output + "/bacteria_alignment.res")
 
-    report = "Pipeline Results Report\n"
+    report = "Analysis report: {}\n".format(args.name)
     report += "=" * 60 + "\n"
     if highest_scoring_hit_details:
         report += f"Template: {highest_scoring_hit_details['#Template']}\n"

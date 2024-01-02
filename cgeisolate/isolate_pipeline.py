@@ -9,11 +9,17 @@ from cgeisolate import kma
 def isolate_pipeline(args):
     print("Starting the isolate pipeline...")
 
+    # Check if output folder already exists
+    output_dir = '/var/lib/cge/results/{}'.format(args.name)
+    if os.path.exists(output_dir):
+        sys.exit(
+            f"Error: Output directory '{output_dir}' already exists. Please choose a different name or delete the existing directory.")
+
     if args.db_dir is None:
-        if not os.path.exists('/var/lib/cge/database/cge_db/'):
+        if not os.path.exists('/var/lib/cge/database/cge_db'):
             sys.exit('Please install the cge_db. It should be located in /var/lib/cge/database/cge_db')
         else:
-            args.db_dir = '/var/lib/cge/database/cge_db/'
+            args.db_dir = '/var/lib/cge/database/cge_db'
             print(f"Using CGE database directory: {args.db_dir}")
 
     if args.output is None:
@@ -23,32 +29,28 @@ def isolate_pipeline(args):
     os.system('mkdir -p ' + args.output)
 
     print(f"Running KMA for bacteria alignment on input: {args.input}")
-    os.system('{}kma -t_db {} -i {} -o {} -ID 75 -md 5 -ont -1t1 -mem_mode -t 8'\
-              .format(args.env_path_bin, args.db_dir + '/bac_db/bac_db', args.input, args.output + "/bacteria_alignment"))
-    #kma.KMARunner(args.input,
-    #              args.output + "/bacteria_alignment",
-    #              args.db_dir + '/bac_db/bac_db',
-    #              "-ID 75 -md 5 -ont -1t1 -mem_mode -t 8").run()
+    os.system('kma -t_db {} -i {} -o {} -ID 75 -md 5 -ont -1t1 -mem_mode -t 8'\
+              .format(args.db_dir + '/bac_db/bac_db', args.input, args.output + "/bacteria_alignment"))
 
     highest_scoring_hit = get_highest_scoring_hit_template(args.output + "/bacteria_alignment.res")
     print(f"Highest scoring hit: {highest_scoring_hit}")
 
     if 'Escherichia coli' in highest_scoring_hit:
         print("Escherichia coli detected. Running KMA for virulence...")
-        os.system('{}kma -t_db {} -i {} -o {} -ont -md 5'\
-                  .format(args.env_path_bin, args.db_dir + '/virulence_db/virulence_db', args.input, args.output + "/virulence"))
+        os.system('kma -t_db {} -i {} -o {} -ont -md 5'\
+                  .format(args.db_dir + '/virulence_db/virulence_db', args.input, args.output + "/virulence"))
 
     print("Running KMA for AMR...")
-    os.system('{}kma -t_db {} -i {} -o {} -ont -md 5 -mem_mode -t 8'\
-              .format(args.env_path_bin, args.db_dir + '/resfinder_db/resfinder_db', args.input, args.output + "/amr"))
+    os.system('kma -t_db {} -i {} -o {} -ont -md 5 -mem_mode -t 8'\
+              .format(args.db_dir + '/resfinder_db/resfinder_db', args.input, args.output + "/amr"))
 
     print("Running KMA for plasmid...")
-    os.system('{}kma -t_db {} -i {} -o {} -ont -md 5 -mem_mode -t 8'\
-                .format(args.env_path_bin, args.db_dir + '/plasmid_db/plasmid_db', args.input, args.output + "/plasmid"))
+    os.system('kma -t_db {} -i {} -o {} -ont -md 5 -mem_mode -t 8'\
+                .format(args.db_dir + '/plasmid_db/plasmid_db', args.input, args.output + "/plasmid"))
 
     print("Running MLST...")
-    os.system('{}kgt_mlst -i {} -o {} -db_dir {} -md 5'\
-                .format(args.env_path_bin, args.input, args.output + "/mlst", args.db_dir))
+    os.system('kgt_mlst -i {} -o {} -db_dir {} -md 5'\
+                .format(args.input, args.output + "/mlst", args.db_dir))
 
     print("Creating report...")
     report = create_report(args, highest_scoring_hit)

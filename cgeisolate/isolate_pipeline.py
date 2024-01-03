@@ -2,6 +2,7 @@ import os
 import sys
 import subprocess
 import csv
+import shutil
 
 from cgeisolate import kma
 
@@ -27,6 +28,10 @@ def isolate_pipeline(args):
 
     print(f"Creating output directory: {args.output}")
     os.system('mkdir -p ' + args.output)
+
+    # Copy the input FASTQ file to the output directory
+    print(f"Copying input FASTQ file to the output directory: {args.input} -> {args.output}")
+    shutil.copy(args.input, args.output)
 
     print(f"Running KMA for bacteria alignment on input: {args.input}")
     os.system('kma -t_db {} -i {} -o {} -ID 75 -md 5 -ont -1t1 -mem_mode -t 8'\

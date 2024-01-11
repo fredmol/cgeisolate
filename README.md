@@ -1,5 +1,7 @@
 # cgeisolate
 
+This tool was developed for analysing single bacterial isolates.
+
 # Installation
 
 The following Conda channels are required:

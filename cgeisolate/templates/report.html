@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ name }} - Bacterial Isolate Analysis</title>
+    <!-- Page-specific print styles -->
+    <style>
+        @page {
+            margin: 2.5cm 1.5cm;
+        }
+        
+        /* Footer Elements Configuration */
+        #footer-logo {
+            position: running(footer-logo);
+        }
+        
+        #footer-version {
+            position: running(footer-version);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-size: 9pt;
+            color: var(--text-secondary);
+            text-align: center;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+        }
+        
+        #footer-text {
+            position: running(footer-text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-size: 6pt;
+            color: var(--text-secondary);
+            text-align: right;
+            line-height: 1.3;
+        }
+    </style>
+</head>
+<body>
+    <!-- =====================
+         Footer Components 
+         ===================== -->
+    <div id="footer-logo">
+        <img src="{{ logo_data_url }}" alt="Company Logo">
+    </div>
+
+    <div id="footer-version">
+        cgeisolate v{{ version }}
+    </div>
+
+    <div id="footer-text">
+        Center for Genomic Epidemiology<br>
+        National Food Institute<br>
+        Technical University of Denmark
+    </div>
+
+    <!-- =====================
+         Main Report Container 
+         ===================== -->
+    <div class="report-container">
+        <!-- Report Header Section -->
+        <div class="report-header">
+            <div class="header-content">
+                <h1>CGE Bacterial Isolate Analysis Report</h1>
+                
+                <!-- Basic Information -->
+                <div class="report-info">
+                    <div class="info-item">
+                        <span class="label">Sample name:&nbsp&nbsp&nbsp</span>
+                        <span class="value">{{ name }}</span>
+                    </div>
+                </div>
+                <div class="report-info">
+                    <div class="info-item">
+                        <span class="label">Report Date:&nbsp&nbsp&nbsp</span>
+                        <span class="value">{{ date }}</span>
+                    </div>
+                </div>
+                
+                <!-- File Statistics -->
+                <div class="file-stats">
+                    <div class="stat-row">
+                        <div class="stat-item">
+                            <span class="label">Input File:&nbsp&nbsp&nbsp</span>
+                            <span class="value">{{ file_stats.file_name }}</span>
+                        </div>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-item">
+                            <span class="label">Total Reads:&nbsp&nbsp&nbsp</span>
+                            <span class="value">{{ file_stats.read_count }}</span>
+                        </div>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-item">
+                            <span class="label">File Size:&nbsp&nbsp&nbsp</span>
+                            <span class="value">{{ file_stats.file_size }}</span>
+                        </div>
+                    </div>
+                    <div class="stat-row">
+                        <div class="stat-item">
+                            <span class="label">Mapping software (KMA) version:&nbsp&nbsp&nbsp</span>
+                            <span class="value">{{ file_stats.kma_version }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- =====================
+             Metrics Overview Sections 
+             ===================== -->
+        <!-- Primary Metrics -->
+        <div class="section metrics-overview">
+            <div class="metric-card">
+                <span class="metric-value">{{ species_name }}</span>
+                <span class="metric-label">Identified Species</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-value">{{ amr_count }}</span>
+                <span class="metric-label">AMR Genes Detected</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-value">{{ phenotype_count }}</span>
+                <span class="metric-label">AMR Phenotypes</span>
+            </div>
+        </div>
+
+        <!-- Secondary Metrics -->
+        <div class="section metrics-overview">
+            <div class="metric-card">
+                <span class="metric-value">{{ mlst_result }}</span>
+                <span class="metric-label">MLST Type</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-value">{{ plasmid_count }}</span>
+                <span class="metric-label">Plasmids Found</span>
+            </div>
+            <div class="metric-card">
+                <span class="metric-value">{{ virulence_count }}</span>
+                <span class="metric-label">{{ virulence_label }}</span>
+            </div>
+        </div>
+
+        <!-- =====================
+             Analysis Results Sections 
+             ===================== -->
+        <!-- Species Identification -->
+        <div class="section main-section">
+            <h2>Species Identification</h2>
+            <div class="data-table-container">
+                <table class="analysis-table">
+                    <thead>
+                        <tr>
+                            <th>Species</th>
+                            <th>Identity (%)</th>
+                            <th>Coverage (%)</th>
+                            <th>Depth</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ species_details.name }}</td>
+                            <td>{{ species_details.identity }}</td>
+                            <td>{{ species_details.coverage }}</td>
+                            <td>{{ species_details.depth }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Resistance Phenotypes -->
+        <div class="section main-section">
+            <h2>Predicted Resistance Phenotypes</h2>
+            <div class="phenotype-table-container">
+                <table class="phenotype-table">
+                    <thead>
+                        <tr>
+                            <th>Drug Class</th>
+                            <th>Resistance Phenotypes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for group in grouped_phenotypes %}
+                        <tr>
+                            <td class="drug-class">{{ group.class }}</td>
+                            <td class="phenotype-cell">
+                                {% for phenotype in group.phenotypes %}
+                                <span class="phenotype-pill">{{ phenotype }}</span>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- AMR Genes -->
+        <div class="section main-section">
+            <h2>Antimicrobial Resistance Genes</h2>
+            <div class="data-table-container">
+                <table class="analysis-table">
+                    <thead>
+                        <tr>
+                            <th>Gene</th>
+                            <th>Identity (%)</th>
+                            <th>Coverage (%)</th>
+                            <th>Depth</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for gene in amr_genes %}
+                        <tr class="{{ gene.match_quality }}">
+                            <td>{{ gene.template }}</td>
+                            <td>{{ gene.identity }}</td>
+                            <td>{{ gene.coverage }}</td>
+                            <td>{{ gene.depth }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Virulence Genes -->
+        <div class="section main-section">
+            <h2>Virulence Genes</h2>
+            <div class="data-table-container">
+                {% if is_ecoli %}
+                    {% if virulence_genes %}
+                        <table class="analysis-table">
+                            <thead>
+                                <tr>
+                                    <th>Gene</th>
+                                    <th>Identity (%)</th>
+                                    <th>Coverage (%)</th>
+                                    <th>Depth</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for gene in virulence_genes %}
+                                <tr class="{{ gene.match_quality }}">
+                                    <td>{{ gene.template }}</td>
+                                    <td>{{ gene.identity }}</td>
+                                    <td>{{ gene.coverage }}</td>
+                                    <td>{{ gene.depth }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <div class="empty-state">
+                            No virulence genes detected in this E. coli isolate
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="info-message">
+                        Note: Virulence gene detection is currently only available for E. coli isolates. 
+                        This isolate was identified as {{ species_name }}.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Plasmids -->
+        <div class="section main-section">
+            <h2>Plasmids</h2>
+            <div class="data-table-container">
+                <table class="analysis-table">
+                    <thead>
+                        <tr>
+                            <th>Plasmid</th>
+                            <th>Identity (%)</th>
+                            <th>Coverage (%)</th>
+                            <th>Depth</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for plasmid in plasmids %}
+                        <tr>
+                            <td>{{ plasmid.template }}</td>
+                            <td>{{ plasmid.identity }}</td>
+                            <td>{{ plasmid.coverage }}</td>
+                            <td>{{ plasmid.depth }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- =====================
+             Visualization Section 
+             ===================== -->
+        <div class="section plot-section">
+            <h2>AMR Gene Distribution by Drug Class</h2>
+            <div class="plot-container">
+                <img src="data:image/png;base64,{{ drug_class_plot }}" 
+                     alt="Drug Class Distribution Plot">
+            </div>
+            <div class="plot-description">
+                Distribution of AMR genes across different drug classes, showing the number of 
+                perfect, good, and partial matches for each class.
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

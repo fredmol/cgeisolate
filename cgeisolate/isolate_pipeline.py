@@ -49,7 +49,6 @@ def isolate_pipeline(args):
     os.system('kma -t_db {} -i {} -o {} -ID 75 -md 5 -ont -1t1 -mem_mode -t 8 -ef'\
               .format(args.db_dir + '/bac_db/bac_db', args.input, args.output + "/bacteria_alignment"))
 
-
     # Make sure there is actually a hit, so job doesn't crash
     highest_scoring_hit = get_highest_scoring_hit_template(args.output + "/bacteria_alignment.res")
 

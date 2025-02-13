@@ -22,11 +22,10 @@ def isolate_pipeline(args):
     print("Starting the isolate pipeline...")
 
     # Check if output folder already exists
-    output_dir = '/var/lib/cge/results/{}'.format(args.name)
+    output_dir = '/var/lib/cge_test/results/{}'.format(args.name)
     if os.path.exists(output_dir):
         sys.exit(
             f"Error: Output directory '{output_dir}' already exists. Please choose a different name or delete the existing directory.")
-
 
     if args.db_dir is None:
         if not os.path.exists('/var/lib/cge/database/cge_db'):
@@ -38,12 +37,39 @@ def isolate_pipeline(args):
     if args.output is None:
         args.output = '/var/lib/cge/results/{}'.format(args.name)
 
+    # Create the parent directory first
+    os.system('mkdir -p /var/lib/cge/results')
+    
     print(f"Creating output directory: {args.output}")
     os.system('mkdir -p ' + args.output)
 
-    # Copy the input FASTQ file to the output directory
-    print(f"Copying input FASTQ file to the output directory: {args.input} -> {args.output}")
-    shutil.copy(args.input, args.output)
+    # Handle trimming if requested
+    if args.trim:
+            from cgeisolate.trim import TrimRunner
+            print("Starting read trimming...")
+            
+            # Update TRIM_DEFAULTS with any command line arguments
+            from cgeisolate.qc_config import TRIM_DEFAULTS
+            TRIM_DEFAULTS.update({
+                'min_length': args.min_length,
+                'max_length': args.max_length,
+                'min_phred': args.min_phred,
+                'min_internal_phred': args.min_internal_phred,
+                'min_average_quality': args.min_average_quality,
+                'trim_5_prime': args.trim_5_prime,
+                'trim_3_prime': args.trim_3_prime
+            })
+            
+            trim_runner = TrimRunner(args.input, args.output, args.name)
+            try:
+                args.input = trim_runner.run()
+                print(f"Successfully trimmed reads to: {args.input}")
+            except Exception as e:
+                sys.exit(f"Error during trimming: {str(e)}")
+    else:
+        # Only copy untrimmed input to output directory if we're not trimming
+        print(f"Copying input FASTQ file to the output directory: {args.input} -> {args.output}")
+        shutil.copy(args.input, args.output)
 
     print(f"Running KMA for bacteria alignment on input: {args.input}")
     os.system('kma -t_db {} -i {} -o {} -ID 75 -md 5 -ont -1t1 -mem_mode -t 8 -ef'\

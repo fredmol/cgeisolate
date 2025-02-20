@@ -22,29 +22,10 @@ def main():
                         default=None, help='Nanopore reads')
     parser.add_argument('-name', action="store", type=str, dest='name',
                         default=None, help='If a folder is provided, this name will be used for the merged file.')
-    parser.add_argument('-trim', action="store_true", dest='trim',
-                        default=False, help='Trim reads using KMA trim')
     parser.add_argument('-db_dir', action="store", default=None, dest='db_dir', help='Path to the folder with cge reference databases.'
                                       'This folder should contain a bac_db, plasmid_db, resfinder_db and virulence_db.')
     parser.add_argument('-o', action="store", type=str, dest='output', help='Output directory')
     parser.add_argument('-v', '--version', action='version', version='%(prog)s ' + __version__)
-
-    # Add trim parameters group
-    trim_group = parser.add_argument_group('Trim parameters')
-    trim_group.add_argument('-ml', '--min-length', type=int, default=16,
-                        help='Minimum read length (default: 16)')
-    trim_group.add_argument('-xl', '--max-length', type=int, default=2147483647,
-                        help='Maximum read length (default: 2147483647)')
-    trim_group.add_argument('-mp', '--min-phred', type=int, default=20,
-                        help='Minimum phred score (default: 20)')
-    trim_group.add_argument('-mi', '--min-internal-phred', type=int, default=0,
-                        help='Minimum internal phred score (default: 0)')
-    trim_group.add_argument('-eq', '--min-average-quality', type=int, default=10,
-                        help='Minimum average quality score (default: 10)')
-    trim_group.add_argument('-5p', '--trim-5-prime', type=int, default=0,
-                        help='Number of bases to trim from 5\' end (default: 0)')
-    trim_group.add_argument('-3p', '--trim-3-prime', type=int, default=0,
-                        help='Number of bases to trim from 3\' end (default: 0)')
 
     args = parser.parse_args()
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0] - 2025-02-20
+### Changed
+- **QC/Trimming Removal:** Removed the integrated quality control and read trimming functionality from the pipeline. All QC operations are now centralized in the separate CGEqc tool.
+
+### Fixed
+- Minor bug fixes and improved error messages in downstream analysis steps.
+
 ## [1.4.0-alpha] - 2025-02-13
 ### ⚠️ Important
 - **KMA Dependency:** This version requires KMA from the `cgelabs` branch (alpha version)

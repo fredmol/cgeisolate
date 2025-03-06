@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.5.1] - 2025-02-28
+### Changed
+- There is no longer a check to see if output folder exists. The tool will run regardless of it existing or not.
+
 ## [1.5.0] - 2025-02-20
 ### Changed
 - **QC/Trimming Removal:** Removed the integrated quality control and read trimming functionality from the pipeline. All QC operations are now centralized in the separate CGEqc tool.

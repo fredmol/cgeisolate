@@ -22,7 +22,7 @@ def isolate_pipeline(args):
     print("Starting the isolate pipeline...")
 
     # Check if output folder already exists
-    output_dir = '/var/lib/cge_test/results/{}'.format(args.name)
+    output_dir = '/var/lib/cge/results/{}'.format(args.name)
 
     if args.db_dir is None:
         if not os.path.exists('/var/lib/cge/database/cge_db'):
@@ -32,10 +32,10 @@ def isolate_pipeline(args):
             print(f"Using CGE database directory: {args.db_dir}")
 
     if args.output is None:
-        args.output = '/var/lib/cge_test/results/{}'.format(args.name)
+        args.output = '/var/lib/cge/results/{}'.format(args.name)
 
     # Create the parent directory first
-    os.system('mkdir -p /var/lib/cge_test/results')
+    os.system('mkdir -p /var/lib/cge/results')
     
     print(f"Creating output directory: {args.output}")
     os.system('mkdir -p ' + args.output)
